@@ -1,0 +1,15 @@
+
+variables to pass to lili view:
+
+currentParent
+currentItems
+items
+limboItems
+
+routes that lili view posts to:
+/setAsCurrent
+/createItem
+/updateItemText
+/toLimbo
+/deleteItem
+/fromLimbo
