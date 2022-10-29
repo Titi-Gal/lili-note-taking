@@ -15,6 +15,10 @@ app.use(express.static("public"));
 
 mongoose.connect('mongodb://localhost:27017/MyliliDB');
 
+app.get('/connect', (req, res) => {
+    res.render('connect')
+});
+
 app.get('/', (req, res) => {
     async function createRootRedirect() {
         await createRoot(Item, Adress);
@@ -95,9 +99,7 @@ app.post('/deleteItem', (req, res) => {
         await Item.deleteItem(itemid);
         res.redirect("/view?id=" + currentid);
     } deleteItem(); 
-    
 });
-
 
 const port = 3000
 app.listen(port, () => {
