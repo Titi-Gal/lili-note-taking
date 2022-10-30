@@ -18,6 +18,13 @@ mongoose.connect('mongodb://localhost:27017/MyliliDB');
 app.get('/connect', (req, res) => {
     res.render('connect')
 });
+app.post('/connect', (req, res) => {
+    res.render('connect')
+});
+app.post('/tryit', (req, res) => {
+    res.render('connect')
+});
+
 
 app.get('/', (req, res) => {
     async function createRootRedirect() {
