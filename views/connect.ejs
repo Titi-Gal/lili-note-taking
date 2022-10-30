@@ -1,10 +1,14 @@
 <%- include('partials/header') %>
-<form>
-    connect
-    <button>connect</button>
-</form>
-<form>
-    try it
-    <button>try it</button>
-</form>
+<div class="page-margins">
+    <div class="section-margins">
+        <form action="/connect" method="post">
+            <button class="connect-btn">connect</button>
+        </form>
+    </div>
+    <div class="section-margins">
+    <form action="/tryit" method="post">
+        <button class="connect-btn">try it</button>
+    </form>
+    </div>
+</div>
 <%- include('partials/footer') %>

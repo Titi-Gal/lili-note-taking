@@ -91,7 +91,6 @@ itemSchema.statics.updateItemText = async function(itemtext, itemid) {
 itemSchema.statics.toLimbo = async function(itemid) {
     try {
         const item = await this.findById(itemid).exec();
-        item.parentid = item._id;
         item.limbo = true;
         await item.save();
     } catch(e) {
