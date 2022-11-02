@@ -1,8 +1,17 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+mongoose.connect('mongodb://localhost:27017/liliDB');
+
+const liliSchema = new Schema({});
+
 const itemSchema = new Schema(
     {
+    liliid: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Item',
+        required: true,
+        },
     parentid: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Item',
@@ -20,9 +29,10 @@ const itemSchema = new Schema(
         }
     }
 )
-const adressSchema = new Schema(
+const userSchema = new Schema(
     {
-    rootid: {
+    connectid: String,
+    liliid: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Item',
         required: true,
@@ -36,25 +46,6 @@ const adressSchema = new Schema(
     }
 )
 
-itemSchema.index({parentid: 1, text: 1}, {unique: true });
-itemSchema.statics.createItem = async function(text, currentid) {
-    try {
-    await this.create({
-        parentid: currentid,
-        text: text,
-    });
-    } catch(e) {
-        console.log(e);
-    }
-}
-itemSchema.statics.getCurrentParent = async function(currentid) {
-    try {
-        const parentItem = await this.findById(currentid).exec();
-        return parentItem;
-    } catch(e) {
-        console.log(e);
-    }
-}
 itemSchema.statics.getCurrentItems = async function(currentid) {
     try {
         const currentItems = await this.find({parentid: currentid, limbo: false}).exec();
@@ -63,17 +54,17 @@ itemSchema.statics.getCurrentItems = async function(currentid) {
         console.log(e);
     }
 }
-itemSchema.statics.getItems = async function() {
+itemSchema.statics.getItems = async function(liliid) {
     try {
-        const limboItems = await this.find({limbo: false}).exec();
+        const limboItems = await this.find({liliid: liliid, limbo: false}).exec();
         return limboItems;
     } catch(e) {
         console.log(e);
     }
 }
-itemSchema.statics.getLimboItems = async function() {
+itemSchema.statics.getLimboItems = async function(liliid) {
     try {
-        const limboItems = await this.find({limbo: true}).exec();
+        const limboItems = await this.find({liliid: liliid, limbo: true}).exec();
         return limboItems;
     } catch(e) {
         console.log(e);
@@ -128,61 +119,49 @@ itemSchema.statics.deleteItem = async function(itemid) {
 }
 itemSchema.statics.getParents = async function createRoot(currentid) {
     const parents = []
-    let parent = await this.getCurrentParent(currentid);
-    while (parent.parentid !== undefined) {
+    let parent = await this.findById(currentid).exec();
+    while (parent) {
         parents.push(parent)
-        parent = await this.getCurrentParent(parent.parentid);
+        parent = await this.findById(parent.parentid).exec();
     }
     return parents.reverse();
 }
 
-adressSchema.statics.getRootid = async function() {
+userSchema.statics.getRootid = async function() {
     try {
-        const adress = await this.findOne({}).exec();
-        return adress.rootid;
+        const user = await this.findOne({}).exec();
+        return user.rootid;
     } catch(e) {
         console.log(e);
     }
 }
-adressSchema.statics.getCurrentid = async function() {
+userSchema.statics.getCurrentid = async function() {
     try {
-        const adress = await this.findOne({}).exec();
-        return adress.currentid;
+        const user = await this.findOne({}).exec();
+        return user.currentid;
     } catch(e) {
         console.log(e);
     }
-}
-adressSchema.statics.setCurrentid = async function(itemid) {
-    try {
-        if (itemid === '') {
-            throw 'id to set empty, already in root?'
-        }
-        const adress = await this.findOne({}).exec();
-        adress.currentid = itemid;
-        await adress.save();
-    } catch(e) {
-        console.log(e);
-    }
-    
 }
 
-module.exports.Item = mongoose.model("Item", itemSchema);
-module.exports.Adress = mongoose.model("Adress", adressSchema);
-module.exports.createRoot = async function createRoot(Item, Adress) {
+module.exports.Lili = mongoose.model("lili", liliSchema);
+module.exports.Item = mongoose.model("item", itemSchema);
+module.exports.User = mongoose.model("user", userSchema);
+module.exports.newRoot = async function newRoot(Item, User) {
     try {
-        let adress = await Adress.find({}).exec();
-        if (adress.length !== 0) {
-            throw "adress length !== 0, root already exists?"
+        let user = await User.find({}).exec();
+        if (user.length !== 0) {
+            throw "user length !== 0, root already exists?"
         }
             const root = await new Item({
             });
-                adress = await new Adress({
-                rootid: root._id,
-                currentid: root._id
+            user = await new User({
+            rootid: root._id,
+            currentid: root._id
             });
             return Promise.all([
                 root.save({ validateBeforeSave: false }),
-                adress.save()
+                user.save()
             ])
     } catch(e) {
         console.log(e);

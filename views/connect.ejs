@@ -1,14 +1,16 @@
 <%- include('partials/header') %>
 <div class="page-margins">
     <div class="section-margins">
-        <form action="/connect" method="post">
+        <form action="/auth/google" method="get">
             <button class="connect-btn">connect</button>
         </form>
     </div>
+    <!-- once connect is working im gonna implement a experiment with connect later option
     <div class="section-margins">
     <form action="/tryit" method="post">
         <button class="connect-btn">try it</button>
     </form>
     </div>
+    -->
 </div>
 <%- include('partials/footer') %>
