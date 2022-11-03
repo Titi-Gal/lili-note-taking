@@ -1,8 +1,4 @@
 fix bug deleteting childs in limbo
-related to view functions {
-    make root apear in goto menu,
-    verify go out button
-    }
 
 '/'
   se existir cookie de usuario:

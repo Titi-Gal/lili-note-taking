@@ -23,7 +23,7 @@
                 </form>
                 <% } %>
 
-                <% if(parents.length > 1) { %>
+                <% if(parents.length > 0) { %>
                     <form action="/setAsCurrentid" method="post">
                         <button title="go out" name="itemid" value="<%= parents.slice(-1)[0].parentid; %>" type="submit">
                             <img class="icon" src="resources/lili-out.svg">
@@ -33,6 +33,9 @@
             </div>
             
             <div id="goto-menu" class="script-display-none">
+                <form class="gotoadress" action="/setAsCurrentid" method="post">
+                    <button name="itemid" value="<%= liliid %>"><p></p></button>
+                </form>
                 <% items.forEach ((item) => { %>
                     <form class="gotoadress" action="/setAsCurrentid" method="post">
                         <button name="itemid" value="<%= item._id; %>"><p><%= item.text; %></p></button>

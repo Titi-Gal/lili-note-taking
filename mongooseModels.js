@@ -47,14 +47,13 @@ const userSchema = new Schema(
 )
 
 itemSchema.index({parentid: 1, text: 1}, {unique: true });
-itemSchema.statics.getParents = async function(liliid, currentid) {
+itemSchema.statics.getParents = async function(currentid) {
     const parents = []
     let parent = await this.findById(currentid).exec();
     while (parent) {
         parents.push(parent)
         parent = await this.findById(parent.parentid).exec();
     }
-    parents.push(liliid);
     return parents.reverse();
 }
 
@@ -68,8 +67,8 @@ itemSchema.statics.getCurrentItems = async function(currentid) {
 }
 itemSchema.statics.getItems = async function(liliid) {
     try {
-        const limboItems = await this.find({liliid: liliid, limbo: false}).exec();
-        return limboItems;
+        const items = await this.find({liliid: liliid, limbo: false}).exec();
+        return items;
     } catch(e) {
         console.log(e);
     }

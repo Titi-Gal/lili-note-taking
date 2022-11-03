@@ -90,7 +90,7 @@ app.get('/view', (req, res) => {
         const currentid = req.query.id;
         const liliid = req.user.liliid;
         Promise.all([
-            Item.getParents(liliid, currentid),
+            Item.getParents(currentid),
             Item.getCurrentItems(currentid),
             Item.getItems(liliid),
             Item.getLimboItems(liliid),
@@ -100,7 +100,8 @@ app.get('/view', (req, res) => {
                 parents: parents,
                 currentItems: currentItems,
                 items: items,
-                limboItems: limboItems
+                limboItems: limboItems,
+                liliid: liliid
             });
         });
     } else {
