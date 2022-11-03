@@ -15,7 +15,7 @@
                 </button>
         </form>
 
-                <% if(items.length > 1) { %>
+                <% if(items.length > 0) { %>
                 <form onsubmit="return false">
                     <button id="goto-btn" title="go to" type="submit">
                         <img class="icon" src="resources/lili-dropdown.svg">
@@ -23,7 +23,7 @@
                 </form>
                 <% } %>
 
-                <% if(parents.length !== 0) { %>
+                <% if(parents.length > 1) { %>
                     <form action="/setAsCurrentid" method="post">
                         <button title="go out" name="itemid" value="<%= parents.slice(-1)[0].parentid; %>" type="submit">
                             <img class="icon" src="resources/lili-out.svg">

@@ -75,7 +75,8 @@ app.get('/', (req, res) => {
         //se autenticado vai para a lista
         res.redirect("/view?id=" + req.user.currentid);
     } else {
-        res.redirect('/connect')
+        //se não vai para conectar
+        res.render('connect')
     }
 });
 
@@ -85,22 +86,26 @@ app.get('/connect', (req, res) => {
 
 //Lili routes
 app.get('/view', (req, res) => {
-    const currentid = req.query.id;
-    const liliid = req.user.liliid;
-    Promise.all([
-        Item.getParents(currentid),
-        Item.getCurrentItems(currentid),
-        Item.getItems(liliid),
-        Item.getLimboItems(liliid),
-    ]).then((variables) => {
-        const [parents, currentItems, items, limboItems] = variables;
-        res.render("lili", {
-            parents: parents,
-            currentItems: currentItems,
-            items: items,
-            limboItems: limboItems
+    if (req.isAuthenticated()) {
+        const currentid = req.query.id;
+        const liliid = req.user.liliid;
+        Promise.all([
+            Item.getParents(liliid, currentid),
+            Item.getCurrentItems(currentid),
+            Item.getItems(liliid),
+            Item.getLimboItems(liliid),
+        ]).then((variables) => {
+            const [parents, currentItems, items, limboItems] = variables;
+            res.render("lili", {
+                parents: parents,
+                currentItems: currentItems,
+                items: items,
+                limboItems: limboItems
+            });
         });
-    });
+    } else {
+        res.redirect('/');
+    }
 });
 
 app.post('/setAsCurrentid', (req, res) => {
@@ -119,46 +124,60 @@ app.post('/createItem', (req, res) => {
         liliid: req.user.liliid,
         parentid: req.user.currentid,
         text: req.body.itemtext
-    }).then(() => {
+    }).catch((e) => {
+        console.log(e);
+    }).finally(() => {
         res.redirect("/view?id=" + req.user.currentid)
-    });
+    })
 });
 
 app.post('/updateItemText', (req, res) => {
-    const itemid = req.body.itemid;
-    const itemtext = req.body.itemtext;
-    async function updateItemText() {
-        const currentid = await User.getCurrentid();
-        await Item.updateItemText(itemtext, itemid);
-        res.redirect("/view?id=" + currentid)
-    } updateItemText();
+    Item.findById(req.body.itemid).exec().then((item) => {
+        item.text = req.body.itemtext;
+        item.save().catch(e => {
+            console.log(e);
+        }).finally(() => {
+            res.redirect("/view?id=" + req.user.currentid)
+        });
+    });
 });
 
 app.post('/toLimbo', (req, res) => {
-    const itemid = req.body.itemid;
-    async function toLimbo() {
-        const currentid = await User.getCurrentid();
-        await Item.toLimbo(itemid);
-        res.redirect("/view?id=" + currentid)
-    } toLimbo();    
+    Item.findById(req.body.itemid).exec().then((item) => {
+        item.limbo = true;
+        item.save().then(() => {
+            res.redirect("/view?id=" + req.user.currentid)
+        });
+    });
 });
 
 app.post('/fromLimbo', (req, res) => {
-    const itemid = req.body.itemid;
-    async function fromLimbo() {
-        const currentid = await User.getCurrentid();
-        await Item.fromLimbo(itemid, currentid);
-        res.redirect("/view?id=" + currentid);
-    } fromLimbo(); 
+    Item.findById(req.body.itemid).exec().then((item) => {
+        item.limbo = false;
+        item.parentid = req.user.currentid;
+        item.save().then(() => {
+            res.redirect("/view?id=" + req.user.currentid)
+        });
+    });
 });
 
 app.post('/deleteItem', (req, res) => {
     const itemid = req.body.itemid;
-    async function deleteItem() {
-        const currentid = await User.getCurrentid();
-        await Item.deleteItem(itemid);
-        res.redirect("/view?id=" + currentid);
-    } deleteItem(); 
+    const todelete = [itemid];
+    recursiveFindChildren([itemid]).then(() => {
+        Item.deleteMany({_id: {$in: todelete}}).then(() => {
+            res.redirect("/view?id=" + req.user.currentid)
+        })
+    })
+    async function recursiveFindChildren(childrenids) {
+        for (let i = 0; i < childrenids.length; i++) {
+            const newChildrenids = await Item.find({parentid: childrenids[i]}).distinct('_id');
+            if (newChildrenids.length !== 0) {
+                todelete.push.apply(todelete, newChildrenids)
+                await recursiveFindChildren(newChildrenids)
+            }
+        }
+    }
 });
 
 const port = 3000

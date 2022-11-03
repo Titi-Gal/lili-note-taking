@@ -1,18 +1,8 @@
-
-variables to pass to lili view:
-
-currentParent
-currentItems
-items
-limboItems
-
-routes that lili view posts to:
-/setAsCurrent
-/createItem
-/updateItemText
-/toLimbo
-/deleteItem
-/fromLimbo
+fix bug deleteting childs in limbo
+related to view functions {
+    make root apear in goto menu,
+    verify go out button
+    }
 
 '/'
   se existir cookie de usuario:
