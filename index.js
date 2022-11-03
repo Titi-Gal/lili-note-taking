@@ -146,6 +146,7 @@ app.post('/updateItemText', (req, res) => {
 app.post('/toLimbo', (req, res) => {
     Item.findById(req.body.itemid).exec().then((item) => {
         item.limbo = true;
+        item.parentid = item.liliid;
         item.save().then(() => {
             res.redirect("/view?id=" + req.user.currentid)
         });
