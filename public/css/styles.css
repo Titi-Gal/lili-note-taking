@@ -119,7 +119,7 @@ input:focus {
 }
 
 .menu-buttons-margin {
-    margin: 3px 0 1rem 0;
+    margin: 4px 0 1rem 0;
 }
 .logo {
     padding: 0.5px;
@@ -203,6 +203,7 @@ header {
 }
 
 ::-webkit-scrollbar {
+    cursor: hand;
     border-top-right-radius: 1rem;
     width: 0.7rem;
     background-color: transparent; /* or add it to the track */
