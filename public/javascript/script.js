@@ -1,6 +1,6 @@
 $('.script-items-btns-toggle').on('focus', function() {
     $('.script-hide').addClass('script-display-none');
-    $(this).next().removeClass('script-display-none');
+    $(this).parent().next().removeClass('script-display-none');
 });
 
 $('input').on('focus', function() {
@@ -24,6 +24,19 @@ $('#goto-btn').on('click', function(event) {
 $('html').on('click', function() {
     if (!$('#goto-menu').hasClass('script-display-none')) {
         $('#goto-menu').addClass('script-display-none');
+    }
+})
+
+$('textarea').on('focusout', function() {
+    const jthis = $(this);
+    const defauttext = jthis.attr('defauttext');
+    const itemtext = jthis.val().trim();
+    const form = jthis.parent();
+    if (!itemtext) {
+        jthis.val(defauttext);
+    }
+    else if(defauttext !== itemtext) {
+        form.submit();
     }
 })
 

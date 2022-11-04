@@ -45,13 +45,12 @@
             
             <div>
             <% currentItems.forEach ((currentItem) => { %>
-                <form action="/updateItemText" method="post">
-                    <textarea class="script-items-btns-toggle" name="itemtext" placeholder="lili" autocomplete="off"><%= currentItem.text; %></textarea>
+                <div class="liliitem">
+                    <form action="/updateItemText" method="post">
+                        <textarea class="script-items-btns-toggle" name="itemtext" autocomplete="off" defauttext="<%= currentItem.text; %>"><%= currentItem.text; %></textarea>
+                        <input class="display-none" name="itemid" value="<%= currentItem._id; %>">
+                    </form>
                     <div class="flex-center lili-buttons-margin script-display-none script-hide">
-                        <button title="update" type="submit" name="itemid" value="<%= currentItem._id; %>">
-                            <img class="icon" src="resources/lili-checkmark.svg">
-                        </button>
-                </form>
                         <form action="/setAsCurrentid" method="post">
                             <button title="go in" type="submit" name="itemid" value="<%= currentItem._id; %>">
                                 <img class="icon" src="resources/lili-in.svg">
@@ -68,6 +67,7 @@
                             </button>
                         </form>
                     </div>
+                </div>
             <% }); %>
             </div>
     </div>

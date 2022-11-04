@@ -86,8 +86,11 @@ input:focus, textarea:focus, .connect-btn:hover {
     caret-color: var(--main-color);
     color: var(--main-color);
     outline: none;
-    margin: -1px;
     border: 2px solid var(--main-color);
+}
+
+input:focus {
+    margin: -1px;
 }
 
 .page-margins {
@@ -223,4 +226,8 @@ header {
 
 #goto-menu button {
     width: 100%;
+}
+
+.display-none {
+    display: none;
 }
