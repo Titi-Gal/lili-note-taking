@@ -22,12 +22,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser((_id, callback) => {
-    console.log('serialize')
     callback(null, _id);
 });
 
 passport.deserializeUser((_id, callback) => {
-    console.log('deserialize');
     User.findById(_id).then((user) => {
         callback(null, user)
     });
@@ -126,7 +124,6 @@ app.post('/createItem', (req, res) => {
         parentid: req.user.currentid,
         text: req.body.itemtext
     }).catch((e) => {
-        console.log(e);
     }).finally(() => {
         res.redirect("/view?id=" + req.user.currentid)
     })
@@ -136,7 +133,6 @@ app.post('/updateItemText', (req, res) => {
     Item.findById(req.body.itemid).exec().then((item) => {
         item.text = req.body.itemtext;
         item.save().catch(e => {
-            console.log(e);
         }).finally(() => {
             res.redirect("/view?id=" + req.user.currentid)
         });

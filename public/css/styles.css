@@ -69,6 +69,10 @@ input, textarea, .connect-btn {
     max-width: 100%;
 }
 
+input, textarea {
+    width: calc(100% - 36px);
+}
+
 input:focus, textarea:focus, .connect-btn:hover {
     caret-color: var(--main-color);
     color: var(--main-color);
