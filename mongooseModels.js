@@ -2,7 +2,7 @@ require('dotenv').config();
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-mongoose.connect('mongodb+srv://titi-gal:' + process.env.MONGO_PASSWORD  + '@cluster0.mre5gvd.mongodb.net/liliDB');
+mongoose.connect('mongodb+srv://titi-gal:' + process.env.ATLAS_SECRET + '@cluster0.mre5gvd.mongodb.net/liliDB');
 
 const liliSchema = new Schema({});
 

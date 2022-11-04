@@ -31,7 +31,7 @@ $('.lili-title').toArray().forEach(liliTitle => {
     let fontSize = $(liliTitle).prev().css("fontSize");
     if (fontSize !== undefined) {
         fontSize = parseInt(fontSize.slice(0, fontSize.length -2));
-        fontSize = fontSize * 0.80;
+        fontSize = fontSize * 0.85;
         liliTitle.style.fontSize = fontSize + "px";
     }
 });
@@ -41,7 +41,7 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 }
 
 function confirmForm() {
-    const teste = confirm('confirm delete?');
+    const teste = confirm('delete this item and its childs?');
     if (teste) {
         return true;
     } else {return false;}

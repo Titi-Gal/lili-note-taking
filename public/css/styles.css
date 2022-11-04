@@ -59,6 +59,14 @@ input, textarea, p, #goto-menu, .connect-btn {
     min-height: 1rem;
 }
 
+textarea{
+    margin: 1px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    min-height: 2.4rem;
+}
+
+
 input, textarea, .connect-btn {
     color: var(--main-color);
     border: 1px solid var(--main-color);
@@ -71,12 +79,14 @@ input, textarea, .connect-btn {
 
 input, textarea {
     width: calc(100% - 36px);
+    max-width: calc(100% - 36px);
 }
 
 input:focus, textarea:focus, .connect-btn:hover {
     caret-color: var(--main-color);
     color: var(--main-color);
     outline: none;
+    margin: -1px;
     border: 2px solid var(--main-color);
 }
 
@@ -102,12 +112,26 @@ input:focus, textarea:focus, .connect-btn:hover {
 }
 
 .lili-buttons-margin {
-    margin: 0 0 1rem 0;
+    margin: 1px 0 1rem 0;
+}
+
+.menu-buttons-margin {
+    margin: 3px 0 1rem 0;
 }
 .logo {
-    padding: 1rem;
+    padding: 0.5px;
     height: 3.5rem;
 }
+.logo:hover {
+    padding: 0px;
+    height: calc(3.5rem + 1px);
+}
+
+header {
+    padding: 1.5rem 0 1rem 0;
+}
+
+
 .icon {
     height: 16px;
     width: 16px;
@@ -117,6 +141,10 @@ input:focus, textarea:focus, .connect-btn:hover {
     margin: -1px;
     border: var(--main-color);
     border: 1px solid;
+}
+
+.logo:hover, .connect-btn:hover {
+    cursor: crosshair;
 }
 
 .maininput {
@@ -162,6 +190,35 @@ input:focus, textarea:focus, .connect-btn:hover {
     transform: translate(-50%);
     z-index: 1;
     max-width: 50%;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    background-clip: padding-box;
+    border-right: solid 1px transparent;
+    border-radius: 1rem;
+}
+
+::-webkit-scrollbar {
+    border-top-right-radius: 1rem;
+    width: 0.7rem;
+    background-color: transparent; /* or add it to the track */
+}
+
+::-webkit-scrollbar-corner {
+    border-right: solid 1px transparent;
+    border-bottom: solid 1px transparent;
+    border-radius: 1rem 0 1rem 0;
+    background: var(--main-color);
+}
+
+::-webkit-resizer {
+    display: none;
+  }
+
+::-webkit-scrollbar-button {
+    height: 6px;
+    visibility: hidden;
 }
 
 #goto-menu button {

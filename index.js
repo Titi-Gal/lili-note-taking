@@ -1,8 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const passport = require('passport');
-const cookieSession = require('cookie-session');
 const GoogleStrategy = require('passport-google-oauth20');
+const MicrosoftStrategy = require('passport-microsoft').Strategy;
+const cookieSession = require('cookie-session');
 const models = require(__dirname + "/mongooseModels.js");
 const User = models.User;
 const Item = models.Item;
@@ -13,7 +14,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 app.use(express.static("public"));
 
-//passport, cookieSession and related routes
+//passport cookies and login function
 app.use(cookieSession({
     keys: [process.env.COOKIE_SECRET],
     })
@@ -31,16 +32,6 @@ passport.deserializeUser((_id, callback) => {
     });
 });
 
-passport.use( new GoogleStrategy({
-    //options for strateg
-    clientID: process.env.CLIENT_ID,
-    clientSecret:  process.env.CLIENT_SECRET,
-    callbackURL: '/auth/google/redirect'
-    }, (accessToken, refreshToken, profile, callback) => {
-        findOrCreateUser(profile, callback)
-    })
-);
-
 async function findOrCreateUser(profile, callback) {
     let user = await User.findOne({connectid: profile.id});
     if (user) {
@@ -56,18 +47,37 @@ async function findOrCreateUser(profile, callback) {
     }
 }
 
-app.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect('/')
-});
-
+//passport google strategy
+passport.use( new GoogleStrategy({
+    //options for strateg
+    clientID: process.env.GOOGLE_ID,
+    clientSecret:  process.env.GOOGLE_SECRET,
+    callbackURL: '/auth/google/redirect'
+    }, (accessToken, refreshToken, profile, callback) => {
+        findOrCreateUser(profile, callback)
+    })
+);
 app.get('/auth/google', passport.authenticate('google', {scope: ['openid']}))
-
 app.get('/auth/google/redirect', passport.authenticate('google'), (req, res) => {
     res.redirect('/')
 });
 
-//
+//passport microsoft strategy
+passport.use( new MicrosoftStrategy({
+    clientID: process.env.MICROSOFT_ID,
+    clientSecret:  process.env.MICROSOFT_SECRET,
+    callbackURL: '/auth/microsoft/redirect',
+    scope: ['User.Read']
+    }, (accessToken, refreshToken, profile, callback) => {
+        findOrCreateUser(profile, callback)
+    })
+);
+app.get('/auth/microsoft', passport.authenticate('microsoft', {prompt: 'select_account'}))
+app.get('/auth/microsoft/redirect', passport.authenticate('microsoft'), (req, res) => {
+    res.redirect('/')
+});
+
+//app connect menu
 app.get('/', (req, res) => {
     if (req.isAuthenticated()) {
         //se autenticado vai para a lista
@@ -82,7 +92,7 @@ app.get('/connect', (req, res) => {
     res.render('connect')
 });
 
-//Lili routes
+//app lili view and intereractions
 app.get('/view', (req, res) => {
     if (req.isAuthenticated()) {
         const currentid = req.query.id;

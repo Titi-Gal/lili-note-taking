@@ -9,7 +9,7 @@
 
         <form action="/createItem" method="post" class="maininput">
             <input type="text" name="itemtext" autocomplete="off" autofocus>
-            <div = class="flex-center lili-buttons-margin">
+            <div = class="flex-center menu-buttons-margin">
                 <button title="add" type="submit">
                     <img class="icon" src="resources/lili-plus.svg">
                 </button>
@@ -46,7 +46,7 @@
             <div>
             <% currentItems.forEach ((currentItem) => { %>
                 <form action="/updateItemText" method="post">
-                    <textarea class="script-items-btns-toggle" name="itemtext" placeholder="lili" rows=2 cols="40" autocomplete="off"><%= currentItem.text; %></textarea>
+                    <textarea class="script-items-btns-toggle" name="itemtext" placeholder="lili" autocomplete="off"><%= currentItem.text; %></textarea>
                     <div class="flex-center lili-buttons-margin script-display-none script-hide">
                         <button title="update" type="submit" name="itemid" value="<%= currentItem._id; %>">
                             <img class="icon" src="resources/lili-checkmark.svg">
