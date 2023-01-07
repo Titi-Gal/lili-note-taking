@@ -52,7 +52,8 @@ passport.use( new GoogleStrategy({
     //options for strateg
     clientID: process.env.GOOGLE_ID,
     clientSecret:  process.env.GOOGLE_SECRET,
-    callbackURL: '/auth/google/redirect'
+    callbackURL: '/auth/google/redirect',
+    proxy: true
     }, (accessToken, refreshToken, profile, callback) => {
         findOrCreateUser(profile, callback)
     })
@@ -67,6 +68,7 @@ passport.use( new MicrosoftStrategy({
     clientID: process.env.MICROSOFT_ID,
     clientSecret:  process.env.MICROSOFT_SECRET,
     callbackURL: '/auth/microsoft/redirect',
+    proxy: true,
     scope: ['User.Read']
     }, (accessToken, refreshToken, profile, callback) => {
         findOrCreateUser(profile, callback)
@@ -77,25 +79,20 @@ app.get('/auth/microsoft/redirect', passport.authenticate('microsoft'), (req, re
     res.redirect('/')
 });
 
-//app connect menu
+//to aways redirect to https
+if(process.env.NODE_ENV === 'production') {
+    app.use((req, res, next) => {
+      if (req.header('x-forwarded-proto') !== 'https')
+        res.redirect(`https://${req.header('host')}${req.url}`)
+      else
+        next()
+    })
+  }
+
+//app view or connect
 app.get('/', (req, res) => {
     if (req.isAuthenticated()) {
-        //se autenticado vai para a lista
-        res.redirect("/view?id=" + req.user.currentid);
-    } else {
-        //se não vai para conectar
-        res.render('connect')
-    }
-});
-
-app.get('/connect', (req, res) => {
-    res.render('connect')
-});
-
-//app lili view and intereractions
-app.get('/view', (req, res) => {
-    if (req.isAuthenticated()) {
-        const currentid = req.query.id;
+        const currentid = req.user.currentid;
         const liliid = req.user.liliid;
         Promise.all([
             Item.getParents(currentid),
@@ -113,8 +110,12 @@ app.get('/view', (req, res) => {
             });
         });
     } else {
-        res.redirect('/');
+        //se não vai para conectar
+        res.render('connect')
     }
+});
+app.get('/connect', (req, res) => {
+    res.render('connect')
 });
 
 app.post('/setAsCurrentid', (req, res) => {
@@ -124,7 +125,7 @@ app.post('/setAsCurrentid', (req, res) => {
             req.user.currentid = user.currentid;
             user.save()})
         .then(() => {
-            res.redirect("/view?id=" + req.user.currentid);
+            res.redirect("/");
             });    
 });
 
@@ -135,7 +136,7 @@ app.post('/createItem', (req, res) => {
         text: req.body.itemtext
     }).catch((e) => {
     }).finally(() => {
-        res.redirect("/view?id=" + req.user.currentid)
+        res.redirect("/")
     })
 });
 
@@ -144,7 +145,7 @@ app.post('/updateItemText', (req, res) => {
         item.text = req.body.itemtext;
         item.save().catch(e => {
         }).finally(() => {
-            res.redirect("/view?id=" + req.user.currentid)
+            res.redirect("/")
         });
     });
 });
@@ -154,7 +155,7 @@ app.post('/toLimbo', (req, res) => {
         item.limbo = true;
         item.parentid = item.liliid;
         item.save().then(() => {
-            res.redirect("/view?id=" + req.user.currentid)
+            res.redirect("/")
         });
     });
 });
@@ -164,7 +165,7 @@ app.post('/fromLimbo', (req, res) => {
         item.limbo = false;
         item.parentid = req.user.currentid;
         item.save().then(() => {
-            res.redirect("/view?id=" + req.user.currentid)
+            res.redirect("/")
         });
     });
 });
@@ -174,7 +175,7 @@ app.post('/deleteItem', (req, res) => {
     const todelete = [itemid];
     recursiveFindChildren([itemid]).then(() => {
         Item.deleteMany({_id: {$in: todelete}}).then(() => {
-            res.redirect("/view?id=" + req.user.currentid)
+            res.redirect("/")
         })
     })
     async function recursiveFindChildren(childrenids) {
@@ -188,7 +189,10 @@ app.post('/deleteItem', (req, res) => {
     }
 });
 
-const port = 3000
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
 app.listen(port, () => {
     console.log(`listening on port ${port}`);
 });

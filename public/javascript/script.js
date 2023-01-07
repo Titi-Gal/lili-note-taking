@@ -11,7 +11,7 @@ $('#goto-btn').on('click', function(event) {
     event.stopPropagation();
     let position = $(this).position().top;
     let height = $(this).height();
-    position = (position + height + 2) + 'px';
+    position = (position + height + 6) + 'px';
     $('.script-hide').addClass('script-display-none')
     if ($('#goto-menu').hasClass('script-display-none')) {
         $('#goto-menu').removeClass('script-display-none');
@@ -32,7 +32,7 @@ $('textarea').on('focusout', function() {
     const defauttext = jthis.attr('defauttext');
     const itemtext = jthis.val().trim();
     const form = jthis.parent();
-    if (!itemtext) {
+    if (!itemtext ||defauttext === itemtext ) {
         jthis.val(defauttext);
     }
     else if(defauttext !== itemtext) {
@@ -53,9 +53,14 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
     $('link[rel="icon"]').attr('href', "resources/lili-logo-darkmode.svg")
 }
 
-function confirmForm() {
-    const teste = confirm('delete this item and its childs?');
-    if (teste) {
-        return true;
-    } else {return false;}
-};
+$('form').on('submit', function(event) {
+    if ($(this).hasClass('delete-form') && !confirm('delete this item and its childs?')) {
+        event.preventDefault();
+    } else {
+        $('body').addClass('hide');
+    }
+})
+
+$('a').on('click', function(event) {
+    $('body').addClass('hide');
+})

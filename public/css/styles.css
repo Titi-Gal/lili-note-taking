@@ -89,7 +89,7 @@ input:focus, textarea:focus, .connect-btn:hover {
     border: 2px solid var(--main-color);
 }
 
-input:focus {
+input:focus, .connect-btn:hover {
     margin: -1px;
 }
 
@@ -231,4 +231,8 @@ header {
 
 .display-none {
     display: none;
+}
+
+.hide {
+    visibility: hidden;
 }
