@@ -1,2 +1,3 @@
 # Lili
- the ultimate note taking experience
+ recursive note taking experience
+ https://lilinotetaking.herokuapp.com/
